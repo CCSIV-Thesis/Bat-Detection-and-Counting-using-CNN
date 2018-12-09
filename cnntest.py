@@ -93,12 +93,9 @@ print(test_img)
 #
 # # Define the number of classes
 num_classes = 1
-#
 num_of_samples = img_data.shape[0]
 labels = np.ones((num_of_samples,),dtype='int64')
-#
 labels[0:] = 0
-#
 names = ['bats']
 #
 # convert class labels to on-hot encoding
@@ -114,16 +111,16 @@ X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_
 input_shape=img_data[0].shape
 print(input_shape)
 model = Sequential()
-model.add(Conv2D(32,(3,3),kernel_size=1,padding='same',input_shape=input_shape,activation="relu"))
+model.add(Conv2D(32,kernel_size=(3,3),padding='same',input_shape=input_shape,activation="relu"))
 # model.add(Activation('relu'))
-model.add(Conv2D(32,(3,3),kernel_size=1,padding='same',activation="relu"))
+model.add(Conv2D(32,kernel_size=(3,3),padding='same',activation="relu"))
 # model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2),dim_ordering="tf"))
 model.add(Dropout(0.5))
 
-model.add(Conv2D(64,(3,3),kernel_size=1,padding='same',activation="relu"))
+model.add(Conv2D(64,kernel_size=(3,3),padding='same',activation="relu"))
 # model.add(Activation('relu'))
-model.add(Conv2D(64,(3,3),kernel_size=1,padding='same',activation="relu"))
+model.add(Conv2D(64,kernel_size=(3,3),padding='same',activation="relu"))
 #model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2),dim_ordering="tf"))
 model.add(Dropout(0.5))
@@ -137,7 +134,7 @@ model.add(Activation('softmax'))
 
 #sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 #model.compile(loss='categorical_crossentropy', optimizer=sgd,metrics=["accuracy"])
-model.compile(loss='sparse_categorical_crossentropy', optimizer='rmsprop',metrics=["accuracy"])
+model.compile(loss='binary_crossentropy', optimizer='rmsprop',metrics=["accuracy"])
 #
 # # Viewing model_configuration
 #
@@ -152,7 +149,7 @@ model.layers[0].trainable
 
 #%%
 # Training
-hist = model.fit(X_train, y_train, batch_size=16, epochs=num_epoch, verbose=1, validation_data=(X_test, y_test))
+hist = model.fit(X_train, y_train, batch_size=16, epochs=20, verbose=1, validation_data=(X_test, y_test))
 
 #hist = model.fit(X_train, y_train, batch_size=32, nb_epoch=20,verbose=1, validation_split=0.2)
 
@@ -160,17 +157,17 @@ hist = model.fit(X_train, y_train, batch_size=16, epochs=num_epoch, verbose=1, v
 from keras import callbacks
 
 filename='model_train_new.csv'
-csv_log=callbacks.CSVLogger(filename, separator=',', append=False)
-
-early_stopping=callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=0, verbose=0, mode='min')
-
+# csv_log=callbacks.CSVLogger(filename, separator=',', append=False)
+#
+# early_stopping=callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=0, verbose=0, mode='min')
+#
 filepath="Best-weights-my_model-{epoch:03d}-{loss:.4f}-{acc:.4f}.hdf5"
-
-checkpoint = callbacks.ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
-
-callbacks_list = [csv_log,early_stopping,checkpoint]
-
-hist = model.fit(X_train, y_train, batch_size=16, epochs=num_epoch, verbose=1, validation_data=(X_test, y_test),callbacks=callbacks_list)
+#
+# checkpoint = callbacks.ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
+#
+# callbacks_list = [csv_log,early_stopping,checkpoint]
+#
+# hist = model.fit(X_train, y_train, batch_size=16, epochs=num_epoch, verbose=1, validation_data=(X_test, y_test),callbacks=callbacks_list)
 
 
 # visualizing losses and accuracy

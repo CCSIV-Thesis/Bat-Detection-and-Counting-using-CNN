@@ -19,7 +19,7 @@ from keras.optimizers import SGD,RMSprop,adam
 
 PATH = os.getcwd()
 # Define data path
-data_path = PATH + '\\Bat dataset'
+data_path = PATH + '/Bat dataset'
 data_dir_list = os.listdir(data_path)
 
 img_rows=128
@@ -36,7 +36,7 @@ img_data_list=[]
 #     print(file)
 print("Please wait...")
 for dataset in data_dir_list:
-	input_img= cv2.imread(data_path + '\\'+ dataset)
+	input_img= cv2.imread(data_path + '/'+ dataset)
 	# Write image onto disk
 	gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
 	# Convert image from RGB to GRAY

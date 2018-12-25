@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-cap = cv2.VideoCapture('batsflyout.mp4')
+cap = cv2.VideoCapture('batsflyout7.mp4')
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 out = cv2.VideoWriter('output.mp4', fourcc, 15.0, (1080,720))
 while(cap.isOpened()):

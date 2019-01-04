@@ -188,7 +188,7 @@ plt.show()
 # print(y_test[0:1])
 #
 # Testing a new image
-test_image = cv2.imread('scolopax_rochussenii_m_1.jpg')
+test_image = cv2.imread('images.jpg')
 # Write image onto disk
 gray = cv2.cvtColor(test_image, cv2.COLOR_BGR2GRAY)
 # Convert image from RGB to GRAY
@@ -283,9 +283,9 @@ from sklearn.metrics import classification_report,confusion_matrix
 import itertools
 
 Y_pred = model.predict(X_test)
-print(Y_pred)
+# print(Y_pred)
 y_pred = np.argmax(Y_pred, axis=1)
-print(y_pred)
+# print(y_pred)
 #y_pred = model.predict_classes(X_test)
 #print(y_pred)
 target_names = ['class 0(Bats)', 'class 1(Non-Bats)']

@@ -25,7 +25,7 @@ def save_webcam(outPath,fps,mirror=False):
             if mirror == False:
                 # Mirror the output video frame
                 # frame = cv2.flip(frame, 1)
-                cv2.line(img=frame, pt1=(100, 0), pt2=(100, 1000000), color=(255, 255, 255), thickness=5, lineType=8, shift=0)
+                # cv2.line(img=frame, pt1=(100, 0), pt2=(100, 1000000), color=(255, 255, 255), thickness=5, lineType=8, shift=0)
                 # Write image onto disk
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 # Convert image from RGB to GRAY

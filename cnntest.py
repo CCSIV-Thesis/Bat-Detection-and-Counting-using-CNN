@@ -235,47 +235,45 @@ print (test_image.shape)
 # Predicting the test image
 print((model.predict(test_image)))
 print(model.predict_classes(test_image))
+
+# # Visualizing the intermediate layer
 #
-# #%%
+# #
+# def get_featuremaps(model, layer_idx, X_batch):
+# 	get_activations = K.function([model.layers[0].input, K.learning_phase()],[model.layers[layer_idx].output,])
+# 	activations = get_activations([X_batch,0])
+# 	return activations
 #
-# Visualizing the intermediate layer
-
+# layer_num=3
+# filter_num=0
 #
-def get_featuremaps(model, layer_idx, X_batch):
-	get_activations = K.function([model.layers[0].input, K.learning_phase()],[model.layers[layer_idx].output,])
-	activations = get_activations([X_batch,0])
-	return activations
-
-layer_num=3
-filter_num=0
-
-activations = get_featuremaps(model, int(layer_num),test_image)
-
-print (np.shape(activations))
-feature_maps = activations[0][0]
-print (np.shape(feature_maps))
-
-if K.image_dim_ordering()=='th':
-	feature_maps=np.rollaxis((np.rollaxis(feature_maps,2,0)),2,0)
-print (feature_maps.shape)
-
-fig=plt.figure(figsize=(16,16))
-plt.imshow(feature_maps[:,:,filter_num],cmap='gray')
-plt.savefig("featuremaps-layer-{}".format(layer_num) + "-filternum-{}".format(filter_num)+'.jpg')
-
-num_of_featuremaps=feature_maps.shape[2]
-fig=plt.figure(figsize=(16,16))
-plt.title("featuremaps-layer-{}".format(layer_num))
-subplot_num=int(np.ceil(np.sqrt(num_of_featuremaps)))
-for i in range(int(num_of_featuremaps)):
-	ax = fig.add_subplot(subplot_num, subplot_num, i+1)
-	#ax.imshow(output_image[0,:,:,i],interpolation='nearest' ) #to see the first filter
-	ax.imshow(feature_maps[:,:,i],cmap='gray')
-	plt.xticks([])
-	plt.yticks([])
-	plt.tight_layout()
-plt.show()
-fig.savefig("featuremaps-layer-{}".format(layer_num) + '.jpg')
+# activations = get_featuremaps(model, int(layer_num),test_image)
+#
+# print (np.shape(activations))
+# feature_maps = activations[0][0]
+# print (np.shape(feature_maps))
+#
+# if K.image_dim_ordering()=='th':
+# 	feature_maps=np.rollaxis((np.rollaxis(feature_maps,2,0)),2,0)
+# print (feature_maps.shape)
+#
+# fig=plt.figure(figsize=(16,16))
+# plt.imshow(feature_maps[:,:,filter_num],cmap='gray')
+# plt.savefig("featuremaps-layer-{}".format(layer_num) + "-filternum-{}".format(filter_num)+'.jpg')
+#
+# num_of_featuremaps=feature_maps.shape[2]
+# fig=plt.figure(figsize=(16,16))
+# plt.title("featuremaps-layer-{}".format(layer_num))
+# subplot_num=int(np.ceil(np.sqrt(num_of_featuremaps)))
+# for i in range(int(num_of_featuremaps)):
+# 	ax = fig.add_subplot(subplot_num, subplot_num, i+1)
+# 	#ax.imshow(output_image[0,:,:,i],interpolation='nearest' ) #to see the first filter
+# 	ax.imshow(feature_maps[:,:,i],cmap='gray')
+# 	plt.xticks([])
+# 	plt.yticks([])
+# 	plt.tight_layout()
+# plt.show()
+# fig.savefig("featuremaps-layer-{}".format(layer_num) + '.jpg')
 
 #%%
 # Printing the confusion matrix
@@ -368,5 +366,5 @@ loaded_model = model_from_json(loaded_model_json)
 loaded_model.load_weights("model.h5")
 print("Loaded model from disk")
 
-model.save('model.hdf5')
-loaded_model=load_model('model.hdf5')
+model.save('model.model')
+loaded_model=load_model('model.model')

@@ -188,7 +188,7 @@ plt.show()
 # print(y_test[0:1])
 #
 # Testing a new image
-test_image = cv2.imread('images.jpg')
+test_image = cv2.imread('b.PNG')
 # Write image onto disk
 gray = cv2.cvtColor(test_image, cv2.COLOR_BGR2GRAY)
 # Convert image from RGB to GRAY

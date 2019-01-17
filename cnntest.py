@@ -19,20 +19,24 @@ from keras.optimizers import SGD,RMSprop,adam
 
 #%%
 
-PATH = os.getcwd()
 # Define data path
+PATH = os.getcwd()
 data_path = PATH + '\\databats'
 data_dir_list = os.listdir(data_path)
 
+#Defining the rows,cols,channels,and epochs for Convolutional Layer inputs.
 img_rows=128
 img_cols=128
 num_channel=3
 num_epoch=20
 
+#We initalized a list of image data and labels to be blank for the preprocessing part.
 img_data_list=[]
 labels_name = {'bat':0,'non-bat':1}
 labels_list = []
 
+#In this process, we use the Canny Edge Detection and the Watershed Algorithms to preprocess every image for both bats and non-bats.
+#At the end of the process, every image should have markers
 for dataset in data_dir_list:
 	img_list=os.listdir(data_path+'\\'+ dataset)
 	print ('Loading the images of dataset-'+'{}\n'.format(dataset))
@@ -41,38 +45,40 @@ for dataset in data_dir_list:
 	for img in img_list:
 		input_img= cv2.imread(data_path + '\\'+ dataset + '\\'+ img)
 		# Write image onto disk
-		gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
 		# Convert image from RGB to GRAY
-		ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+		gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
 		# apply thresholding to convert the image to binary
-		fg = cv2.erode(thresh, None, iterations=1)
+		ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 		# erode the image
-		bgt = cv2.dilate(thresh, None, iterations=1)
+		fg = cv2.erode(thresh, None, iterations=1)
 		# Dilate the image
-		ret, bg = cv2.threshold(bgt, 1, 128, 1)
+		bgt = cv2.dilate(thresh, None, iterations=1)
 		# Apply thresholding
-		marker = cv2.add(fg, bg)
+		ret, bg = cv2.threshold(bgt, 1, 128, 1)
 		# Add foreground and background
-		canny = cv2.Canny(marker, 300, 350)
+		marker = cv2.add(fg, bg)
 		# Apply canny edge detector
-		new, contours, hierarchy = cv2.findContours(canny, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+		canny = cv2.Canny(marker, 300, 350)
 		# Finding the contors in the image using chain approximation
-		marker32 = np.int32(marker)
+		new, contours, hierarchy = cv2.findContours(canny, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 		# converting the marker to float 32 bit
-		cv2.watershed(input_img,marker32)
+		marker32 = np.int32(marker)
 		# Apply watershed algorithm
+		cv2.watershed(input_img,marker32)
 		m = cv2.convertScaleAbs(marker32)
-		ret, thresh = cv2.threshold(m, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 		# Apply thresholding on the image to convert to binary image
-		thresh_inv = cv2.bitwise_not(thresh)
+		ret, thresh = cv2.threshold(m, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 		# Invert the thresh
-		res = cv2.bitwise_and(input_img, input_img, mask=thresh)
+		thresh_inv = cv2.bitwise_not(thresh)
 		# Bitwise and with the image mask thresh
-		res3 = cv2.bitwise_and(input_img, input_img, mask=thresh_inv)
+		res = cv2.bitwise_and(input_img, input_img, mask=thresh)
 		# Bitwise and the image with mask as threshold invert
-		res4 = cv2.addWeighted(res, 1, res3, 1, 0)
+		res3 = cv2.bitwise_and(input_img, input_img, mask=thresh_inv)
 		# Take the weighted average
+		res4 = cv2.addWeighted(res, 1, res3, 1, 0)
+		# Draw the markers
 		final = cv2.drawContours(res4, contours, -1, (0, 255, 0), 1)
+		# Resize the preprocessed image into a 128x128 image
 		input_img_resize=cv2.resize(final,(128,128))
 		img_data_list.append(input_img_resize)
 		labels_list.append(label)
@@ -118,9 +124,6 @@ model.add(Activation('relu'))
 model.add(Dropout(0.5))
 model.add(Dense(num_classes))
 model.add(Activation('softmax'))
-
-#sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
-#model.compile(loss='categorical_crossentropy', optimizer=sgd,metrics=["accuracy"])
 model.compile(loss='binary_crossentropy', optimizer='adam',metrics=["accuracy"])
 #
 # # Viewing model_configuration
@@ -133,8 +136,6 @@ model.layers[0].output_shape
 model.layers[0].get_weights()
 np.shape(model.layers[0].get_weights()[0])
 model.layers[0].trainable
-
-print(Y)
 #%%
 # Training
 hist = model.fit(X_train, y_train, batch_size=16, epochs=20, verbose=1, validation_data=(X_test, y_test))
@@ -154,7 +155,6 @@ plt.ylabel('loss')
 plt.title('train_loss vs val_loss')
 plt.grid(True)
 plt.legend(['train','val'])
-#print plt.style.available # use bmh, classic,ggplot for big pictures
 plt.style.use(['classic'])
 
 plt.figure(2,figsize=(7,5))
@@ -172,56 +172,47 @@ plt.show()
 #
 # # Evaluating the model
 #
-# score = model.evaluate(X_test, y_test, verbose=0)
-# print('Test Loss:', score[0])
-# print('Test accuracy:', score[1])
-#
-# test_image = X_test[0:1]
-# # X_test = X_test * 255
-# # X_test = X_test.astype('int64')
-# # print(X_test[0:1])
-# # print(X_test[0:1].shape)
-# # cv2.imshow("Test Image", X_test[0:1])
-# # cv2.waitKey(0)
-# print(model.predict(test_image))
-# print(model.predict_classes(test_image))
-# print(y_test[0:1])
-#
+score = model.evaluate(X_test, y_test, verbose=0)
+print('Test Loss:', score[0])
+print('Test accuracy:', score[1])
+
 # Testing a new image
-test_image = cv2.imread('b.PNG')
 # Write image onto disk
-gray = cv2.cvtColor(test_image, cv2.COLOR_BGR2GRAY)
+test_image = cv2.imread('b.PNG')
 # Convert image from RGB to GRAY
-ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+gray = cv2.cvtColor(test_image, cv2.COLOR_BGR2GRAY)
 # apply thresholding to convert the image to binary
-fg = cv2.erode(thresh, None, iterations=1)
+ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 # erode the image
-bgt = cv2.dilate(thresh, None, iterations=1)
+fg = cv2.erode(thresh, None, iterations=1)
 # Dilate the image
-ret, bg = cv2.threshold(bgt, 1, 128, 1)
+bgt = cv2.dilate(thresh, None, iterations=1)
 # Apply thresholding
-marker = cv2.add(fg, bg)
+ret, bg = cv2.threshold(bgt, 1, 128, 1)
 # Add foreground and background
-canny = cv2.Canny(marker, 300, 350)
+marker = cv2.add(fg, bg)
 # Apply canny edge detector
-new, contours, hierarchy = cv2.findContours(canny, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+canny = cv2.Canny(marker, 300, 350)
 # Finding the contors in the image using chain approximation
-marker32 = np.int32(marker)
+new, contours, hierarchy = cv2.findContours(canny, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 # converting the marker to float 32 bit
-cv2.watershed(test_image,marker32)
+marker32 = np.int32(marker)
 # Apply watershed algorithm
+cv2.watershed(test_image,marker32)
 m = cv2.convertScaleAbs(marker32)
-ret, thresh = cv2.threshold(m, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 # Apply thresholding on the image to convert to binary image
-thresh_inv = cv2.bitwise_not(thresh)
+ret, thresh = cv2.threshold(m, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 # Invert the thresh
-res = cv2.bitwise_and(test_image, test_image, mask=thresh)
+thresh_inv = cv2.bitwise_not(thresh)
 # Bitwise and with the image mask thresh
-res3 = cv2.bitwise_and(test_image, test_image, mask=thresh_inv)
+res = cv2.bitwise_and(test_image, test_image, mask=thresh)
 # Bitwise and the image with mask as threshold invert
-res4 = cv2.addWeighted(res, 1, res3, 1, 0)
+res3 = cv2.bitwise_and(test_image, test_image, mask=thresh_inv)
 # Take the weighted average
+res4 = cv2.addWeighted(res, 1, res3, 1, 0)
+# Draw the markers
 final = cv2.drawContours(res4, contours, -1, (0, 255, 0), 1)
+
 test_image=cv2.resize(final,(128,128))
 cv2.imshow("Final Test Image",test_image)
 cv2.waitKey(0)

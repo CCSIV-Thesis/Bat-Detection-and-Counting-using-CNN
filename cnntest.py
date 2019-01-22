@@ -25,8 +25,8 @@ data_path = PATH + '\\databats'
 data_dir_list = os.listdir(data_path)
 
 #Defining the rows,cols,channels,and epochs for Convolutional Layer inputs.
-img_rows=128
-img_cols=128
+img_rows=64
+img_cols=64
 num_channel=3
 num_epoch=20
 
@@ -79,12 +79,30 @@ for dataset in data_dir_list:
 		# Draw the markers
 		final = cv2.drawContours(res4, contours, -1, (0, 255, 0), 1)
 		# Resize the preprocessed image into a 128x128 image
-		input_img_resize=cv2.resize(final,(128,128))
+		input_img_resize=cv2.resize(final,(img_rows,img_cols))
 		img_data_list.append(input_img_resize)
 		labels_list.append(label)
 
+# cv2.imshow("Canny+Watershed", final)  # Display the image
+# cv2.imshow("Grayscale", gray)  # Display the image
+# cv2.imshow("Foreground", fg)  # Display the image
+# cv2.imshow("Background", bg)  # Display the image
+# cv2.imshow("Marker", marker)  # Display the image
+# cv2.imshow("Thresh", res)  # Display the image
+# cv2.imshow("Thresh Inverse", res3)  # Display the image
+# cv2.resizeWindow("Canny+Watershed",280,280)
+# cv2.resizeWindow("Grayscale",280,280)
+# cv2.resizeWindow("Foreground",280,280)
+# cv2.resizeWindow("Background",280,280)
+# cv2.resizeWindow("Marker",280,280)
+# cv2.resizeWindow("Thresh",280,280)
+# cv2.resizeWindow("Thresh Inverse",280,280)
+# cv2.waitKey(0)
+
 img_data = np.array(img_data_list)
 img_data = img_data.astype('float32')
+#The reason that the values for each image vector should be normalized to 0-1 is that it would be easier for the model later on
+#to process the values for classification.
 img_data /= 255
 
 num_classes = 2
@@ -104,22 +122,22 @@ X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random
 input_shape=img_data[0].shape
 print(input_shape)
 model = Sequential()
-model.add(Conv2D(32,kernel_size=(3,3),padding='same',input_shape=input_shape))
+model.add(Conv2D(16,kernel_size=(3,3),padding='same',input_shape=input_shape))
+model.add(Activation('relu'))
+model.add(Conv2D(16,kernel_size=(3,3),padding='same'))
+model.add(Activation('relu'))
+# model.add(MaxPooling2D(pool_size=(2, 2),dim_ordering="tf"))
+model.add(Dropout(0.5))
+
+model.add(Conv2D(32,kernel_size=(3,3),padding='same'))
 model.add(Activation('relu'))
 model.add(Conv2D(32,kernel_size=(3,3),padding='same'))
 model.add(Activation('relu'))
 # model.add(MaxPooling2D(pool_size=(2, 2),dim_ordering="tf"))
 model.add(Dropout(0.5))
 
-model.add(Conv2D(64,kernel_size=(3,3),padding='same'))
-model.add(Activation('relu'))
-model.add(Conv2D(64,kernel_size=(3,3),padding='same'))
-model.add(Activation('relu'))
-# model.add(MaxPooling2D(pool_size=(2, 2),dim_ordering="tf"))
-model.add(Dropout(0.5))
-
 model.add(Flatten())
-model.add(Dense(64))
+model.add(Dense(32))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 model.add(Dense(num_classes))
@@ -138,7 +156,7 @@ np.shape(model.layers[0].get_weights()[0])
 model.layers[0].trainable
 #%%
 # Training
-hist = model.fit(X_train, y_train, batch_size=16, epochs=20, verbose=1, validation_data=(X_test, y_test))
+hist = model.fit(X_train, y_train, batch_size=16, epochs=num_epoch, verbose=1, validation_data=(X_test, y_test))
 
 # visualizing losses and accuracy
 train_loss=hist.history['loss']
@@ -165,13 +183,11 @@ plt.ylabel('accuracy')
 plt.title('train_acc vs val_acc')
 plt.grid(True)
 plt.legend(['train','val'],loc=4)
-#print plt.style.available # use bmh, classic,ggplot for big pictures
 plt.style.use(['classic'])
 plt.show()
-# #%%
-#
-# # Evaluating the model
-#
+
+# Evaluating the model
+
 score = model.evaluate(X_test, y_test, verbose=0)
 print('Test Loss:', score[0])
 print('Test accuracy:', score[1])
@@ -188,7 +204,7 @@ fg = cv2.erode(thresh, None, iterations=1)
 # Dilate the image
 bgt = cv2.dilate(thresh, None, iterations=1)
 # Apply thresholding
-ret, bg = cv2.threshold(bgt, 1, 128, 1)
+ret, bg = cv2.threshold(bgt, 1, 64, 1)
 # Add foreground and background
 marker = cv2.add(fg, bg)
 # Apply canny edge detector
@@ -213,7 +229,7 @@ res4 = cv2.addWeighted(res, 1, res3, 1, 0)
 # Draw the markers
 final = cv2.drawContours(res4, contours, -1, (0, 255, 0), 1)
 
-test_image=cv2.resize(final,(128,128))
+test_image=cv2.resize(final,(img_rows,img_cols))
 cv2.imshow("Final Test Image",test_image)
 cv2.waitKey(0)
 test_image = np.array(test_image)

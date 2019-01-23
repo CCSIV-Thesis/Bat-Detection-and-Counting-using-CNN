@@ -126,14 +126,12 @@ model.add(Conv2D(16,kernel_size=(3,3),padding='same',input_shape=input_shape))
 model.add(Activation('relu'))
 model.add(Conv2D(16,kernel_size=(3,3),padding='same'))
 model.add(Activation('relu'))
-# model.add(MaxPooling2D(pool_size=(2, 2),dim_ordering="tf"))
 model.add(Dropout(0.5))
 
 model.add(Conv2D(32,kernel_size=(3,3),padding='same'))
 model.add(Activation('relu'))
 model.add(Conv2D(32,kernel_size=(3,3),padding='same'))
 model.add(Activation('relu'))
-# model.add(MaxPooling2D(pool_size=(2, 2),dim_ordering="tf"))
 model.add(Dropout(0.5))
 
 model.add(Flatten())
@@ -231,7 +229,7 @@ final = cv2.drawContours(res4, contours, -1, (0, 255, 0), 1)
 
 test_image=cv2.resize(final,(img_rows,img_cols))
 cv2.imshow("Final Test Image",test_image)
-cv2.waitKey(0)
+# cv2.waitKey(0)
 test_image = np.array(test_image)
 test_image = test_image.astype('float32')
 test_image /= 255
@@ -243,56 +241,12 @@ print (test_image.shape)
 print((model.predict(test_image)))
 print(model.predict_classes(test_image))
 
-# # Visualizing the intermediate layer
-#
-# #
-# def get_featuremaps(model, layer_idx, X_batch):
-# 	get_activations = K.function([model.layers[0].input, K.learning_phase()],[model.layers[layer_idx].output,])
-# 	activations = get_activations([X_batch,0])
-# 	return activations
-#
-# layer_num=3
-# filter_num=0
-#
-# activations = get_featuremaps(model, int(layer_num),test_image)
-#
-# print (np.shape(activations))
-# feature_maps = activations[0][0]
-# print (np.shape(feature_maps))
-#
-# if K.image_dim_ordering()=='th':
-# 	feature_maps=np.rollaxis((np.rollaxis(feature_maps,2,0)),2,0)
-# print (feature_maps.shape)
-#
-# fig=plt.figure(figsize=(16,16))
-# plt.imshow(feature_maps[:,:,filter_num],cmap='gray')
-# plt.savefig("featuremaps-layer-{}".format(layer_num) + "-filternum-{}".format(filter_num)+'.jpg')
-#
-# num_of_featuremaps=feature_maps.shape[2]
-# fig=plt.figure(figsize=(16,16))
-# plt.title("featuremaps-layer-{}".format(layer_num))
-# subplot_num=int(np.ceil(np.sqrt(num_of_featuremaps)))
-# for i in range(int(num_of_featuremaps)):
-# 	ax = fig.add_subplot(subplot_num, subplot_num, i+1)
-# 	#ax.imshow(output_image[0,:,:,i],interpolation='nearest' ) #to see the first filter
-# 	ax.imshow(feature_maps[:,:,i],cmap='gray')
-# 	plt.xticks([])
-# 	plt.yticks([])
-# 	plt.tight_layout()
-# plt.show()
-# fig.savefig("featuremaps-layer-{}".format(layer_num) + '.jpg')
-
-#%%
 # Printing the confusion matrix
 from sklearn.metrics import classification_report,confusion_matrix
 import itertools
 
 Y_pred = model.predict(X_test)
-# print(Y_pred)
 y_pred = np.argmax(Y_pred, axis=1)
-# print(y_pred)
-#y_pred = model.predict_classes(X_test)
-#print(y_pred)
 target_names = ['class 0(Bats)', 'class 1(Non-Bats)']
 
 print(classification_report(np.argmax(y_test,axis=1), y_pred,target_names=target_names))
@@ -344,11 +298,6 @@ plt.figure()
 # Plot non-normalized confusion matrix
 plot_confusion_matrix(cnf_matrix, classes=target_names,
                       title='Confusion matrix')
-#plt.figure()
-# Plot normalized confusion matrix
-#plot_confusion_matrix(cnf_matrix, classes=target_names, normalize=True,
-#                      title='Normalized confusion matrix')
-#plt.figure()
 plt.show()
 
 #%%

@@ -251,9 +251,6 @@ target_names = ['class 0(Bats)', 'class 1(Non-Bats)']
 
 print(classification_report(np.argmax(y_test,axis=1), y_pred,target_names=target_names))
 
-print(confusion_matrix(np.argmax(y_test,axis=1), y_pred))
-
-
 # Plotting the confusion matrix
 def plot_confusion_matrix(cm, classes,
                           normalize=False,
@@ -269,14 +266,6 @@ def plot_confusion_matrix(cm, classes,
     tick_marks = np.arange(len(classes))
     plt.xticks(tick_marks, classes, rotation=45)
     plt.yticks(tick_marks, classes)
-
-    if normalize:
-        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        print("Normalized confusion matrix")
-    else:
-        print('Confusion matrix, without normalization')
-
-    print(cm)
 
     thresh = cm.max() / 2.
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):

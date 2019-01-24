@@ -253,9 +253,6 @@ target_names = ['class 0(Bats)', 'class 1(Non-Bats)']
 
 print(classification_report(np.argmax(y_test,axis=1), y_pred,target_names=target_names))
 
-print(confusion_matrix(np.argmax(y_test,axis=1), y_pred))
-
-
 # Plotting the confusion matrix
 def plot_confusion_matrix(cm, classes,
                           normalize=False,
@@ -271,14 +268,6 @@ def plot_confusion_matrix(cm, classes,
     tick_marks = np.arange(len(classes))
     plt.xticks(tick_marks, classes, rotation=45)
     plt.yticks(tick_marks, classes)
-
-    if normalize:
-        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        print("Normalized confusion matrix")
-    else:
-        print('Confusion matrix, without normalization')
-
-    print(cm)
 
     thresh = cm.max() / 2.
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
@@ -306,23 +295,6 @@ plt.show()
 # Saving and loading model and weights
 from keras.models import model_from_json
 from keras.models import load_model
-
-# serialize model to JSON
-model_json = model.to_json()
-with open("model.json", "w") as json_file:
-    json_file.write(model_json)
-# serialize weights to HDF5
-model.save_weights("model.h5")
-print("Saved model to disk")
-
-# load json and create model
-json_file = open('model.json', 'r')
-loaded_model_json = json_file.read()
-json_file.close()
-loaded_model = model_from_json(loaded_model_json)
-# load weights into new model
-loaded_model.load_weights("model.h5")
-print("Loaded model from disk")
 
 model.save('model.model')
 loaded_model=load_model('model.model')

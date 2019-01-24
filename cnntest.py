@@ -21,7 +21,7 @@ from keras.optimizers import SGD,RMSprop,adam
 
 # Define data path
 PATH = os.getcwd()
-data_path = PATH + '\\databats'
+data_path = PATH + '/databats'
 data_dir_list = os.listdir(data_path)
 
 #Defining the rows,cols,channels,and epochs for Convolutional Layer inputs.
@@ -38,12 +38,12 @@ labels_list = []
 #In this process, we use the Canny Edge Detection and the Watershed Algorithms to preprocess every image for both bats and non-bats.
 #At the end of the process, every image should have markers
 for dataset in data_dir_list:
-	img_list=os.listdir(data_path+'\\'+ dataset)
+	img_list=os.listdir(data_path+'/'+ dataset)
 	print ('Loading the images of dataset-'+'{}\n'.format(dataset))
 	print ("Please wait...")
 	label = labels_name[dataset]
 	for img in img_list:
-		input_img= cv2.imread(data_path + '\\'+ dataset + '\\'+ img)
+		input_img= cv2.imread(data_path + '/'+ dataset + '/'+ img)
 		# Write image onto disk
 		# Convert image from RGB to GRAY
 		gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
@@ -192,7 +192,7 @@ print('Test accuracy:', score[1])
 
 # Testing a new image
 # Write image onto disk
-test_image = cv2.imread('b.PNG')
+test_image = cv2.imread('sunset.jpg')
 # Convert image from RGB to GRAY
 gray = cv2.cvtColor(test_image, cv2.COLOR_BGR2GRAY)
 # apply thresholding to convert the image to binary

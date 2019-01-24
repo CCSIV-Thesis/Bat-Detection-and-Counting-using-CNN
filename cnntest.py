@@ -61,7 +61,7 @@ for dataset in data_dir_list:
 		canny = cv2.Canny(marker, 300, 350)
 		# Finding the contors in the image using chain approximation
 		new, contours, hierarchy = cv2.findContours(canny, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-		# converting the marker to float 32 bit
+		# converting the marker to int 32 bit
 		marker32 = np.int32(marker)
 		# Apply watershed algorithm
 		cv2.watershed(input_img,marker32)
@@ -83,21 +83,22 @@ for dataset in data_dir_list:
 		img_data_list.append(input_img_resize)
 		labels_list.append(label)
 
-# cv2.imshow("Canny+Watershed", final)  # Display the image
-# cv2.imshow("Grayscale", gray)  # Display the image
-# cv2.imshow("Foreground", fg)  # Display the image
-# cv2.imshow("Background", bg)  # Display the image
-# cv2.imshow("Marker", marker)  # Display the image
-# cv2.imshow("Thresh", res)  # Display the image
-# cv2.imshow("Thresh Inverse", res3)  # Display the image
-# cv2.resizeWindow("Canny+Watershed",280,280)
-# cv2.resizeWindow("Grayscale",280,280)
-# cv2.resizeWindow("Foreground",280,280)
-# cv2.resizeWindow("Background",280,280)
-# cv2.resizeWindow("Marker",280,280)
-# cv2.resizeWindow("Thresh",280,280)
-# cv2.resizeWindow("Thresh Inverse",280,280)
-# cv2.waitKey(0)
+cv2.imshow("Canny+Watershed", input_img_resize)
+cv2.imshow("Grayscale", gray)
+cv2.imshow("Foreground", fg)
+cv2.imshow("Background", bg)
+cv2.imshow("Marker", marker)
+cv2.imshow("Thresh", res)
+cv2.imshow("Thresh Inverse", res3)
+cv2.imshow("Canny", canny)
+cv2.resizeWindow("Canny+Watershed",280,280)
+cv2.resizeWindow("Grayscale",280,280)
+cv2.resizeWindow("Foreground",280,280)
+cv2.resizeWindow("Background",280,280)
+cv2.resizeWindow("Marker",280,280)
+cv2.resizeWindow("Thresh",280,280)
+cv2.resizeWindow("Thresh Inverse",280,280)
+cv2.resizeWindow("Canny",280,280)
 
 img_data = np.array(img_data_list)
 img_data = img_data.astype('float32')
@@ -229,6 +230,7 @@ final = cv2.drawContours(res4, contours, -1, (0, 255, 0), 1)
 
 test_image=cv2.resize(final,(img_rows,img_cols))
 cv2.imshow("Final Test Image",test_image)
+cv2.resizeWindow("Final Test Image",280,280)
 # cv2.waitKey(0)
 test_image = np.array(test_image)
 test_image = test_image.astype('float32')

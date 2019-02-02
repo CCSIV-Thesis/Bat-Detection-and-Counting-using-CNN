@@ -311,44 +311,62 @@ print(model.predict_classes(test_image))
 # plt.show()
 # fig.savefig("featuremaps-layer-{}".format(layer_num) + '.jpg')
 
-layer_outputs = [layer.output for layer in model.layers[:10]] # Extracts the outputs of the top 12 layers
+layer_outputs = [layer.output for layer in model.layers[:10]] # Extracts the outputs of the top 10 layers
 activation_model = models.Model(inputs=model.input, outputs=layer_outputs) # Creates a model that will return these outputs, given the model input
 activations = activation_model.predict(test_image) # Returns a list of five Numpy arrays: one array per layer activation
-first_layer_activation = activations[0]
-print(layer_outputs)
-print(activations)
-print(first_layer_activation.shape)
-plt.matshow(first_layer_activation[0, :, :, 0], cmap='gray')
-plt.show()
 
+# first_layer_activation = activations[0]
+# print(layer_outputs)
+# print(activations.shape)
+# print(first_layer_activation.shape)
+# plt.matshow(first_layer_activation[0, :, :, 0], cmap='gray')
+# plt.title(first_layer_activation)
+# plt.show()
 
-layer_names = []
+layer_name = []
+num = 0
+ch = 0
 for layer in model.layers:
-    layer_names.append(layer.name) # Names of the layers, so you can have them as part of your plot
-
-print(layer_names)
-images_per_row = 16
-for layer_name, layer_activation in zip(layer_names, activations): # Displays the feature maps
-	n_features = layer_activation.shape[-1] # Number of features in the feature map
-	size = layer_activation.shape[1] #The feature map has shape (1, size, size, n_features).
-	n_cols = n_features // images_per_row # Tiles the activation channels in this matrix
-	display_grid = np.zeros((size * n_cols, images_per_row * size))
-	for col in range(n_cols): # Tiles each filter into a big horizontal grid
-		for row in range(images_per_row):
-			channel_image = layer_activation[0, :, :,col * images_per_row + row]
-			channel_image -= channel_image.mean() # Post-processes the feature to make it visually palatable
-			channel_image /= channel_image.std()
-			channel_image *= 64
-			channel_image += 128
-			channel_image = np.clip(channel_image, 0, 255).astype('uint8')
-			display_grid[col * size : (col + 1) * size, # Displays the grid
-			             row * size : (row + 1) * size] = channel_image
-	scale = 1. / size
-	plt.figure(figsize=(scale * display_grid.shape[1],
-	            scale * display_grid.shape[0]))
-	plt.title(layer_name)
-	plt.grid(False)
-	plt.imshow(display_grid, aspect='auto', cmap='viridis')
+    layer_name.append(layer.name) # Names of the layers, so you can have them as part of your plot
+for name in layer_name: # Displays the feature maps
+	layer_outputs = name #get layer name
+	activate = activations[num] #get activation layer
+	num = num + 1
+	print(name) #prints the name of layer
+	print(activate.shape) #prints the shape of the activations
+	while ch < 3: #controls the different channels
+		plt.matshow(activate[0, :, :, ch], cmap='gray')
+		title = name + " channel " + str(ch)
+		plt.title(title)
+		print("channel ", ch)
+		plt.show()
+		ch = ch + 1
+	ch = 0
+	if num == 10:
+		break
+#
+# images_per_row = 16
+# for layer_name, layer_activation in zip(layer_names, activations): # Displays the feature maps
+# 	n_features = layer_activation.shape[-1] # Number of features in the feature map
+# 	size = layer_activation.shape[1] #The feature map has shape (1, size, size, n_features).
+# 	n_cols = n_features // images_per_row # Tiles the activation channels in this matrix
+# 	display_grid = np.zeros((size * n_cols, images_per_row * size))
+# 	for col in range(n_cols): # Tiles each filter into a big horizontal grid
+# 		for row in range(images_per_row):
+# 			channel_image = layer_activation[0, :, :,col * images_per_row + row]
+# 			channel_image -= channel_image.mean() # Post-processes the feature to make it visually palatable
+# 			channel_image /= channel_image.std()
+# 			channel_image *= 64
+# 			channel_image += 128
+# 			channel_image = np.clip(channel_image, 0, 255).astype('uint8')
+# 			display_grid[col * size : (col + 1) * size, # Displays the grid
+# 			             row * size : (row + 1) * size] = channel_image
+# 	scale = 1. / size
+# 	plt.figure(figsize=(scale * display_grid.shape[1],
+# 	            scale * display_grid.shape[0]))
+# 	plt.title(layer_name)
+# 	plt.grid(False)
+# 	plt.imshow(display_grid, aspect='auto', cmap='viridis')
 #
 # # Printing the confusion matrix
 # from sklearn.metrics import classification_report,confusion_matrix

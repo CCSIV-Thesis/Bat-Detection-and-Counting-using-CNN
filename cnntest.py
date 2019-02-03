@@ -29,11 +29,11 @@ data_dir_list = os.listdir(data_path)
 img_rows=64
 img_cols=64
 num_channel=3
-num_epoch=20
+num_epoch=200
 
 #We initalized a list of image data and labels to be blank for the preprocessing part.
 img_data_list=[]
-labels_name = {'bat':0}
+labels_name = {'bat':0,'non-bat':1}
 labels_list = []
 
 #In this process, we use the Canny Edge Detection and the Watershed Algorithms to preprocess every image for both bats and non-bats.
@@ -83,8 +83,6 @@ for dataset in data_dir_list:
 		input_img_resize=cv2.resize(final,(img_rows,img_cols))
 		img_data_list.append(input_img_resize)
 		labels_list.append(label)
-
-<<<<<<< HEAD
 # cv2.imshow("Canny+Watershed", input_img_resize)  # Display the image
 # cv2.imshow("Grayscale", gray)  # Display the image
 # cv2.imshow("Foreground", fg)  # Display the image
@@ -100,32 +98,13 @@ for dataset in data_dir_list:
 # cv2.resizeWindow("Thresh",280,280)
 # cv2.resizeWindow("Thresh Inverse",280,280)
 # cv2.waitKey(0)
-=======
-cv2.imshow("Canny+Watershed", input_img_resize)
-cv2.imshow("Grayscale", gray)
-cv2.imshow("Foreground", fg)
-cv2.imshow("Background", bg)
-cv2.imshow("Marker", marker)
-cv2.imshow("Thresh", res)
-cv2.imshow("Thresh Inverse", res3)
-cv2.imshow("Canny", canny)
-cv2.resizeWindow("Canny+Watershed",280,280)
-cv2.resizeWindow("Grayscale",280,280)
-cv2.resizeWindow("Foreground",280,280)
-cv2.resizeWindow("Background",280,280)
-cv2.resizeWindow("Marker",280,280)
-cv2.resizeWindow("Thresh",280,280)
-cv2.resizeWindow("Thresh Inverse",280,280)
-cv2.resizeWindow("Canny",280,280)
->>>>>>> e50f223decdfc672df8b5188d6479905c936cf19
-
 img_data = np.array(img_data_list)
 img_data = img_data.astype('float32')
 #The reason that the values for each image vector should be normalized to 0-1 is that it would be easier for the model later on
 #to process the values for classification.
 img_data /= 255
 
-num_classes = 1
+num_classes = 2
 labels = np.array(labels_list)
 # print the count of number of samples for different classes
 print(np.unique(labels,return_counts=True))
@@ -177,32 +156,32 @@ model.layers[0].trainable
 hist = model.fit(X_train, y_train, batch_size=16, epochs=num_epoch, verbose=1, validation_data=(X_test, y_test))
 
 # visualizing losses and accuracy
-# train_loss=hist.history['loss']
-# val_loss=hist.history['val_loss']
-# train_acc=hist.history['acc']
-# val_acc=hist.history['val_acc']
-# xc=range(num_epoch)
-#
-# plt.figure(1,figsize=(7,5))
-# plt.plot(xc,train_loss)
-# plt.plot(xc,val_loss)
-# plt.xlabel('num of Epochs')
-# plt.ylabel('loss')
-# plt.title('train_loss vs val_loss')
-# plt.grid(True)
-# plt.legend(['train','val'])
-# plt.style.use(['classic'])
-#
-# plt.figure(2,figsize=(7,5))
-# plt.plot(xc,train_acc)
-# plt.plot(xc,val_acc)
-# plt.xlabel('num of Epochs')
-# plt.ylabel('accuracy')
-# plt.title('train_acc vs val_acc')
-# plt.grid(True)
-# plt.legend(['train','val'],loc=4)
-# plt.style.use(['classic'])
-# plt.show()
+train_loss=hist.history['loss']
+val_loss=hist.history['val_loss']
+train_acc=hist.history['acc']
+val_acc=hist.history['val_acc']
+xc=range(num_epoch)
+
+plt.figure(1,figsize=(7,5))
+plt.plot(xc,train_loss)
+plt.plot(xc,val_loss)
+plt.xlabel('num of Epochs')
+plt.ylabel('loss')
+plt.title('train_loss vs val_loss')
+plt.grid(True)
+plt.legend(['train','val'])
+plt.style.use(['classic'])
+
+plt.figure(2,figsize=(7,5))
+plt.plot(xc,train_acc)
+plt.plot(xc,val_acc)
+plt.xlabel('num of Epochs')
+plt.ylabel('accuracy')
+plt.title('train_acc vs val_acc')
+plt.grid(True)
+plt.legend(['train','val'],loc=4)
+plt.style.use(['classic'])
+plt.show()
 
 # Evaluating the model
 
@@ -249,12 +228,9 @@ final = cv2.drawContours(res4, contours, -1, (0, 255, 0), 1)
 
 test_image=cv2.resize(final,(img_rows,img_cols))
 cv2.imshow("Final Test Image",test_image)
-<<<<<<< HEAD
 cv2.waitKey(0)
-=======
 cv2.resizeWindow("Final Test Image",280,280)
 # cv2.waitKey(0)
->>>>>>> e50f223decdfc672df8b5188d6479905c936cf19
 test_image = np.array(test_image)
 test_image = test_image.astype('float32')
 test_image /= 255
@@ -263,7 +239,7 @@ test_image= np.expand_dims(test_image, axis=0)
 print (test_image.shape)
 
 # Predicting the test image
-print((model.predict(test_image)[0]))
+print((model.predict(test_image)))
 print(model.predict_classes(test_image))
 
 # Visualizing the intermediate layer
@@ -311,44 +287,46 @@ print(model.predict_classes(test_image))
 # plt.show()
 # fig.savefig("featuremaps-layer-{}".format(layer_num) + '.jpg')
 
-layer_outputs = [layer.output for layer in model.layers[:10]] # Extracts the outputs of the top 12 layers
-activation_model = models.Model(inputs=model.input, outputs=layer_outputs) # Creates a model that will return these outputs, given the model input
-activations = activation_model.predict(test_image) # Returns a list of five Numpy arrays: one array per layer activation
-first_layer_activation = activations[0]
-print(layer_outputs)
-print(activations)
-print(first_layer_activation.shape)
-plt.matshow(first_layer_activation[0, :, :, 0], cmap='gray')
-plt.show()
-
-
-layer_names = []
-for layer in model.layers:
-    layer_names.append(layer.name) # Names of the layers, so you can have them as part of your plot
-
-print(layer_names)
-images_per_row = 16
-for layer_name, layer_activation in zip(layer_names, activations): # Displays the feature maps
-	n_features = layer_activation.shape[-1] # Number of features in the feature map
-	size = layer_activation.shape[1] #The feature map has shape (1, size, size, n_features).
-	n_cols = n_features // images_per_row # Tiles the activation channels in this matrix
-	display_grid = np.zeros((size * n_cols, images_per_row * size))
-	for col in range(n_cols): # Tiles each filter into a big horizontal grid
-		for row in range(images_per_row):
-			channel_image = layer_activation[0, :, :,col * images_per_row + row]
-			channel_image -= channel_image.mean() # Post-processes the feature to make it visually palatable
-			channel_image /= channel_image.std()
-			channel_image *= 64
-			channel_image += 128
-			channel_image = np.clip(channel_image, 0, 255).astype('uint8')
-			display_grid[col * size : (col + 1) * size, # Displays the grid
-			             row * size : (row + 1) * size] = channel_image
-	scale = 1. / size
-	plt.figure(figsize=(scale * display_grid.shape[1],
-	            scale * display_grid.shape[0]))
-	plt.title(layer_name)
-	plt.grid(False)
-	plt.imshow(display_grid, aspect='auto', cmap='viridis')
+# layer_outputs = [layer.output for layer in model.layers[:10]] # Extracts the outputs of the top 12 layers
+# activation_model = models.Model(inputs=model.input, outputs=layer_outputs) # Creates a model that will return these outputs, given the model input
+# activations = activation_model.predict(test_image) # Returns a list of five Numpy arrays: one array per layer activation
+# first_layer_activation = activations[0]
+# # print(layer_outputs)
+# # print(activations.shape)
+# print(first_layer_activation.shape)
+# plt.matshow(first_layer_activation[0, :, :, 2], cmap='gray')
+# plt.show()
+#
+#
+# layer_names = []
+# for layer in model.layers:
+#     layer_names.append(layer.name) # Names of the layers, so you can have them as part of your plot
+#
+# print(layer_names)
+# images_per_row = 16
+# for layer_name, layer_activation in zip(layer_names, activations): # Displays the feature maps
+# 	n_features = layer_activation.shape[-1] # Number of features in the feature map
+# 	size = layer_activation.shape[1] #The feature map has shape (1, size, size, n_features).
+# 	n_cols = 2 # Tiles the activation channels in this matrix
+# 	print(n_features)
+# 	print(size)
+# 	display_grid = np.zeros((size * n_cols * 2, images_per_row * size * 6))
+# 	for col in range(n_cols): # Tiles each filter into a big horizontal grid
+# 		for row in range(images_per_row):
+# 			channel_image = layer_activation[0, :, :,col * images_per_row + row]
+# 			channel_image -= channel_image.mean() # Post-processes the feature to make it visually palatable
+# 			channel_image /= channel_image.std()
+# 			channel_image *= 64
+# 			channel_image += 128
+# 			channel_image = np.clip(channel_image, 0, 255).astype('uint8')
+# 			display_grid[col * size : (col + 1) * size, # Displays the grid
+# 			             row * size : (row + 1) * size] = channel_image
+# 	scale = 1. / size
+# 	plt.figure(figsize=(scale * display_grid.shape[1],
+# 	            scale * display_grid.shape[0]))
+# 	plt.title(layer_name)
+# 	plt.grid(False)
+# 	plt.imshow(display_grid, aspect='auto', cmap='viridis')
 #
 # # Printing the confusion matrix
 # from sklearn.metrics import classification_report,confusion_matrix

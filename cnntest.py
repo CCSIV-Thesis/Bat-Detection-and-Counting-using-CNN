@@ -286,8 +286,6 @@ print(model.predict_classes(test_image))
 # 	plt.tight_layout()
 # plt.show()
 # fig.savefig("featuremaps-layer-{}".format(layer_num) + '.jpg')
-
-<<<<<<< HEAD
 # layer_outputs = [layer.output for layer in model.layers[:10]] # Extracts the outputs of the top 12 layers
 # activation_model = models.Model(inputs=model.input, outputs=layer_outputs) # Creates a model that will return these outputs, given the model input
 # activations = activation_model.predict(test_image) # Returns a list of five Numpy arrays: one array per layer activation
@@ -304,7 +302,6 @@ print(model.predict_classes(test_image))
 #     layer_names.append(layer.name) # Names of the layers, so you can have them as part of your plot
 #
 # print(layer_names)
-=======
 layer_outputs = [layer.output for layer in model.layers[:10]] # Extracts the outputs of the top 10 layers
 activation_model = models.Model(inputs=model.input, outputs=layer_outputs) # Creates a model that will return these outputs, given the model input
 activations = activation_model.predict(test_image) # Returns a list of five Numpy arrays: one array per layer activation
@@ -329,7 +326,7 @@ for name in layer_name: # Displays the feature maps
 	print(name) #prints the name of layer
 	print(activate.shape) #prints the shape of the activations
 	while ch < 3: #controls the different channels
-		plt.matshow(activate[0, :, :, ch], cmap='gray')
+		plt.matshow(activate[0, :, :, ch])
 		title = name + " channel " + str(ch)
 		plt.title(title)
 		print("channel ", ch)
@@ -339,20 +336,16 @@ for name in layer_name: # Displays the feature maps
 	if num == 10:
 		break
 #
->>>>>>> 08fdc79b252ec9bd7dde9e7cc2e1d3674411934b
 # images_per_row = 16
 # for layer_name, layer_activation in zip(layer_names, activations): # Displays the feature maps
 # 	n_features = layer_activation.shape[-1] # Number of features in the feature map
 # 	size = layer_activation.shape[1] #The feature map has shape (1, size, size, n_features).
-<<<<<<< HEAD
 # 	n_cols = 2 # Tiles the activation channels in this matrix
 # 	print(n_features)
 # 	print(size)
 # 	display_grid = np.zeros((size * n_cols * 2, images_per_row * size * 6))
-=======
 # 	n_cols = n_features // images_per_row # Tiles the activation channels in this matrix
 # 	display_grid = np.zeros((size * n_cols, images_per_row * size))
->>>>>>> 08fdc79b252ec9bd7dde9e7cc2e1d3674411934b
 # 	for col in range(n_cols): # Tiles each filter into a big horizontal grid
 # 		for row in range(images_per_row):
 # 			channel_image = layer_activation[0, :, :,col * images_per_row + row]

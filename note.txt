@@ -1,0 +1,8 @@
+For every frame
+    While point of extraction is not beyond the y point of the frame
+            Crop 64x64 region
+            Get classification
+            If bat
+                batCount++
+            Proceed to next point
+     Proceed to next frame

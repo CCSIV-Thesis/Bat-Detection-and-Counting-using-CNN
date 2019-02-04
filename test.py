@@ -3,7 +3,7 @@ import numpy as np
 from keras.models import load_model
 
 IMG_SIZE = 128
-def save_webcam(outPath,fps,mirror=False):
+def preprocess_video(outPath,fps,mirror=False):
     # Capturing video from webcam:
     cap = cv2.VideoCapture('batsflyout7.mp4')
 
@@ -92,7 +92,7 @@ def save_webcam(outPath,fps,mirror=False):
     cv2.destroyAllWindows()
 
 def main():
-    save_webcam('output.mp4', 30.0,mirror=False)
+    preprocess_video('output.mp4', 30.0,mirror=False)
 
 if __name__ == '__main__':
     main()

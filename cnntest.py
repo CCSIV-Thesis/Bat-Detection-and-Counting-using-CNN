@@ -232,8 +232,6 @@ cv2.waitKey(0)
 cv2.resizeWindow("Final Test Image",280,280)
 # cv2.waitKey(0)
 test_image = np.array(test_image)
-test_image = test_image.astype('float32')
-test_image /= 255
 # print (test_image.shape)
 test_image= np.expand_dims(test_image, axis=0)
 print (test_image.shape)

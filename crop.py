@@ -5,6 +5,7 @@ from keras.models import load_model
 #Initializing the bat counter, the output video, and the model
 batCounter = 0
 finalCount = 0
+z = 0
 vid = cv2.VideoCapture('output.mp4')
 model = load_model("model.model")
 # cv2.line(img=test_image, pt1=(x, 0), pt2=(x, y), color=(255, 255, 255), thickness=1, lineType=8, shift=0)
@@ -44,12 +45,14 @@ def preprocessing(frame):
 
     final = cv2.drawContours(res4, contours, -1, (0, 255, 0), 1)
     # print("Preprocessed image shape: ",final.shape)
+    # cv2.imshow("Preprocessed image: ",final)
+    # cv2.waitKey(0)
     return final
 
 def predictions(frame,batCounter):
     IMG_SIZE = 64
     num_channel = 3
-    x = frame.shape[1] - 100
+    x = frame.shape[1] - 150
     y = frame.shape[0]
     point = 0
     while(point < y):
@@ -77,9 +80,14 @@ def predictions(frame,batCounter):
 
 print("Processing....")
 while (vid.isOpened()):
-    ret, frame = vid.read()
-    preprocessedFrame = preprocessing(frame)
-    frameCount = predictions(preprocessedFrame,batCounter)
-    finalCount = finalCount + frameCount
+    if(z < vid.get(cv2.CAP_PROP_FRAME_COUNT)):
+        # print("Frame Count:",vid.get(cv2.CAP_PROP_FRAME_COUNT))
+        ret, frame = vid.read()
+        preprocessedFrame = preprocessing(frame)
+        frameCount = predictions(preprocessedFrame,batCounter)
+        finalCount = finalCount + frameCount
+        z = z + 1
+    else:
+        break
 
 print("Final Bat Count for the Entire Video: ", finalCount)

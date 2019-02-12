@@ -2,8 +2,9 @@ import cv2
 import numpy as np
 from keras.models import load_model
 
-#Initializing the bat counter, the output video, and the model 
+#Initializing the bat counter, the output video, and the model
 batCounter = 0
+finalCount = 0
 vid = cv2.VideoCapture('output.mp4')
 model = load_model("model.model")
 # cv2.line(img=test_image, pt1=(x, 0), pt2=(x, y), color=(255, 255, 255), thickness=1, lineType=8, shift=0)
@@ -42,7 +43,7 @@ def preprocessing(frame):
     # Take the weighted average
 
     final = cv2.drawContours(res4, contours, -1, (0, 255, 0), 1)
-    print("Preprocessed image shape: ",final.shape)
+    # print("Preprocessed image shape: ",final.shape)
     return final
 
 def predictions(frame,batCounter):
@@ -53,11 +54,11 @@ def predictions(frame,batCounter):
     point = 0
     while(point < y):
         crop_img = frame[point:point+IMG_SIZE,x:x+IMG_SIZE]
-        print("Cropped image shape: ",crop_img.shape)
-        print("Current point: ",point)
-        print("MAX Y: ",y)
-        cv2.imshow("cropped",crop_img)
-        cv2.waitKey(0)
+        # print("Cropped image shape: ",crop_img.shape)
+        # print("Current point: ",point)
+        # print("MAX Y: ",y)
+        # cv2.imshow("cropped",crop_img)
+        # cv2.waitKey(0)
         if(crop_img.shape[0] != IMG_SIZE):
             zeros = np.zeros((IMG_SIZE - crop_img.shape[0])*IMG_SIZE*num_channel,dtype="uint8").reshape(((IMG_SIZE - crop_img.shape[0]),IMG_SIZE,num_channel))
             crop_img =  np.concatenate((crop_img,zeros))
@@ -66,16 +67,19 @@ def predictions(frame,batCounter):
         shape_predict = crop_img.reshape(-1, IMG_SIZE, IMG_SIZE, 3)
         prediction = model.predict([shape_predict])
         # print(shape_predict)
-        print(prediction)
+        # print(prediction)
         if(prediction[0][0] > prediction[0][1]):
             batCounter = batCounter + 1
         point = point + 64
     # cv2.imwrite("Final img.png",final)
-    print("Bat Count for this Frame: ", batCounter)
+    # print("Bat Count for this Frame: ", batCounter)
     return batCounter
 
+print("Processing....")
 while (vid.isOpened()):
     ret, frame = vid.read()
     preprocessedFrame = preprocessing(frame)
-    finalCount = predictions(preprocessedFrame,batCounter)
-    print("Final Bat Count for the Entire Video: ", finalCount)
+    frameCount = predictions(preprocessedFrame,batCounter)
+    finalCount = finalCount + frameCount
+
+print("Final Bat Count for the Entire Video: ", finalCount)

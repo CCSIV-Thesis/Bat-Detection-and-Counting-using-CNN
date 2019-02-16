@@ -112,9 +112,9 @@ print(np.unique(labels,return_counts=True))
 Y = np_utils.to_categorical(labels, num_classes)
 #
 #Shuffle the dataset
-x,y = shuffle(img_data,Y, random_state=10)
+# x,y = shuffle(img_data,Y, random_state=10)
 # Split the dataset
-X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=10)
+X_train, X_test, y_train, y_test = train_test_split(img_data, Y, test_size=0.32, random_state=10)
 
 #%%
 # Defining the model
@@ -228,7 +228,7 @@ final = cv2.drawContours(res4, contours, -1, (0, 255, 0), 1)
 
 test_image=cv2.resize(final,(img_rows,img_cols))
 cv2.imshow("Final Test Image",test_image)
-cv2.waitKey(0)
+# cv2.waitKey(0)
 cv2.resizeWindow("Final Test Image",280,280)
 # cv2.waitKey(0)
 test_image = np.array(test_image)

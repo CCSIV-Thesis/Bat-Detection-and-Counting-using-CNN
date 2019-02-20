@@ -7,7 +7,7 @@ batCounter = 0
 finalCount = 0
 z = 0
 vid = cv2.VideoCapture('output.mp4')
-model = load_model("model.model")
+model = load_model("bat.model")
 # cv2.line(img=test_image, pt1=(x, 0), pt2=(x, y), color=(255, 255, 255), thickness=1, lineType=8, shift=0)
 
 def preprocessing(frame):
@@ -60,7 +60,7 @@ def predictions(frame,batCounter):
         # print("Cropped image shape: ",crop_img.shape)
         # print("Current point: ",point)
         # print("MAX Y: ",y)
-        # cv2.imshow("cropped",crop_img)
+        cv2.imshow("cropped",crop_img)
         # cv2.waitKey(0)
         if(crop_img.shape[0] != IMG_SIZE):
             zeros = np.zeros((IMG_SIZE - crop_img.shape[0])*IMG_SIZE*num_channel,dtype="uint8").reshape(((IMG_SIZE - crop_img.shape[0]),IMG_SIZE,num_channel))
@@ -69,8 +69,8 @@ def predictions(frame,batCounter):
         crop_img /= 255
         shape_predict = crop_img.reshape(-1, IMG_SIZE, IMG_SIZE, 3)
         prediction = model.predict([shape_predict])
-        # print(shape_predict)
-        # print(prediction)
+        print(shape_predict)
+        print(prediction)
         if(prediction[0][0] > prediction[0][1]):
             batCounter = batCounter + 1
         point = point + 64

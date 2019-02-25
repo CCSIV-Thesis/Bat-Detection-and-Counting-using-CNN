@@ -5,7 +5,7 @@ from keras.models import load_model
 IMG_SIZE = 128
 def preprocess_video(outPath,fps,mirror=False):
     # Capturing video from webcam:
-    cap = cv2.VideoCapture('batsflyout.mp4')
+    cap = cv2.VideoCapture('batsflyout7.mp4')
 
     currentFrame = 0
 

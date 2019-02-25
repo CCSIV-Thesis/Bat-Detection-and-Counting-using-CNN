@@ -48,28 +48,49 @@ def preprocessing(frame):
     return final
 
 def predictions(frame,batCounter,direction):
+    print(frame.shape)
     IMG_SIZE = 64
     num_channel = 3
     if(direction == "1"): #Right
         x = frame.shape[1] - 150
         y = frame.shape[0]
+        print("Y:",y)
+        print("X:",x)
+        li = cv2.line(img=frame, pt1=(x, 0), pt2=(x, y), color=(255, 255, 255), thickness=1, lineType=8, shift=0)
+        cv2.imshow("Preprocessed with line",li)
     elif(direction == "2"): #Top
         x = frame.shape[1]
-        y = frame.shape[0] - 276 #570
+        y = frame.shape[0] - 570 #276
+        print("Y:",y)
+        print("X:",x)
+        li = cv2.line(img=frame, pt1=(0, y), pt2=(x, y), color=(255, 255, 255), thickness=1, lineType=8, shift=0)
+        cv2.imshow("Preprocessed with l ine",li)
+        # cv2.waitKey(0)
     elif(direction == "3"): #Left
-        x = frame.shape[1] - 490    #1130
+        x = frame.shape[1] - 1130 #490
         y = frame.shape[0]
+        print("Y:",y)
+        print("X:",x)
+        li = cv2.line(img=frame, pt1=(x, 0), pt2=(x, y), color=(255, 255, 255), thickness=1, lineType=8, shift=0)
+        cv2.imshow("Preprocessed with line",li)
     elif(direction == "4"): #Bottom
         x = frame.shape[1]
         y = frame.shape[0] - 150
+        print("Y:",y)
+        print("X:",x)
+        li = cv2.line(img=frame, pt1=(0, y), pt2=(x, y), color=(255, 255, 255), thickness=1, lineType=8, shift=0)
+        cv2.imshow("Preprocessed with l ine",li)
+        # cv2.waitKey(0)
     point = 0
     if(direction == "1" or direction == "3"):
         print("X: ",x)
         while(point < y):
             if(direction == "1"):
+                print("Current X: ",x+IMG_SIZE)
                 crop_img = frame[point:point+IMG_SIZE,x:x+IMG_SIZE]
             else:
-                crop_img = frame[point:point+IMG_SIZE,x:x-IMG_SIZE]
+                print("Current X: ",x-IMG_SIZE)
+                crop_img = frame[point:point+IMG_SIZE,x-IMG_SIZE:x]
             # print("Cropped image shape: ",crop_img.shape)
             # print("Current point: ",point)
             print("MAX Y: ",y)
@@ -91,7 +112,7 @@ def predictions(frame,batCounter,direction):
     elif(direction == "2" or direction == "4"):
         while(point < x):
             if(direction == "2"):
-                crop_img = frame[y:y+IMG_SIZE,point:point-IMG_SIZE]
+                crop_img = frame[y-IMG_SIZE:y,point:point+IMG_SIZE]
             else:
                 crop_img = frame[y:y+IMG_SIZE,point:point+IMG_SIZE]
             # print("Cropped image shape: ",crop_img.shape)
@@ -127,28 +148,3 @@ while (vid.isOpened()):
         break
 
 print("Final Bat Count for the Entire Video: ", finalCount)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# print("Y:",y)
-# print("X:",x)
-# li = cv2.line(img=frame, pt1=(x, 0), pt2=(x, y), color=(255, 255, 255), thickness=1, lineType=8, shift=0)
-# cv2.imshow("Preprocessed with line",li)
-
-# print("Y:",y)
-# print("X:",x)
-# li = cv2.line(img=frame, pt1=(0, y), pt2=(x, y), color=(255, 255, 255), thickness=1, lineType=8, shift=0)
-# cv2.imshow("Preprocessed with l ine",li)
-# cv2.waitKey(0)

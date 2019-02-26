@@ -146,7 +146,6 @@ model.add(Activation('relu'))
 model.add(Dropout(0.5))
 model.add(Dense(num_classes))
 model.add(Activation('softmax'))
-# model = LeNet.build(width=64, height=64, depth=3, classes=2)
 opt = Adam(lr=initial_learning, decay=initial_learning / epochs)
 model.compile(loss="binary_crossentropy", optimizer=opt,
 	metrics=["accuracy"])

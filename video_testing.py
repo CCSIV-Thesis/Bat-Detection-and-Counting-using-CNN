@@ -6,8 +6,8 @@ from keras.models import load_model
 batCounter = 0
 finalCount = 0
 z = 0
-vid = cv2.VideoCapture('output2.mp4')
-model = load_model("bat.model")
+vid = cv2.VideoCapture('batsflyout7.mp4')
+model = load_model("newBat.model")
 
 def preprocessing(frame):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -64,8 +64,8 @@ def predictions(frame,batCounter,direction):
         y = frame.shape[0] - 150
     point = 0
     if(direction == "1" or direction == "3"):
-        print("wait")
-        print("X: ",x)
+        # print("wait")
+        # print("X: ",x)
         while(point < y):
             if(direction == "1"):
                 crop_img = frame[point:point+IMG_SIZE,x:x+IMG_SIZE]
@@ -74,10 +74,9 @@ def predictions(frame,batCounter,direction):
             # print("Cropped image shape: ",crop_img.shape)
             # print("Current point: ",point)
             # print("MAX Y: ",y)
+            cv2.imshow("frame",frame)
             cv2.imshow("cropped",crop_img)
-            # print("Press enter to continue...")
-            # i=input()
-            cv2.waitKey(1000)
+            cv2.waitKey(100)
             # cv2.destroyAllWindows()
             # cv2.waitKey(1)
             if(crop_img.shape[0] != IMG_SIZE):

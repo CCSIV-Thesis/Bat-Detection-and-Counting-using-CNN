@@ -42,7 +42,7 @@ args = vars(ap.parse_args())
 # and batch size
 img_rows=64
 img_cols=64
-epochs = 100
+epochs = 150
 initial_learning = 1e-3
 batch_size = 1
 

@@ -95,7 +95,7 @@ def predictions(frame,batCounter,direction):
             # print("Current point: ",point)
             print("MAX Y: ",y)
             cv2.imshow("cropped",crop_img)
-            cv2.waitKey(0)
+            cv2.waitKey(100)
             if(crop_img.shape[0] != IMG_SIZE):
                 zeros = np.zeros((IMG_SIZE - crop_img.shape[0])*IMG_SIZE*num_channel,dtype="uint8").reshape(((IMG_SIZE - crop_img.shape[0]),IMG_SIZE,num_channel))
                 crop_img =  np.concatenate((crop_img,zeros))
@@ -103,11 +103,14 @@ def predictions(frame,batCounter,direction):
             crop_img /= 255
             shape_predict = crop_img.reshape(-1, IMG_SIZE, IMG_SIZE, 3)
             prediction = model.predict([shape_predict])
-            pred_batch = model.predict_on_batch([shape_predict])
-            print(pred_batch)
+            # pred_batch = model.predict_on_batch([shape_predict])
+            # print(pred_batch)
             print(prediction)
             if(prediction[0][0] > prediction[0][1]):
+                print("Bat")
                 batCounter = batCounter + 1
+            else:
+                print("Non-Bat")
             point = point + 64
     elif(direction == "2" or direction == "4"):
         while(point < x):
@@ -130,7 +133,10 @@ def predictions(frame,batCounter,direction):
             # print(shape_predict)
             print(prediction)
             if(prediction[0][0] > prediction[0][1]):
+                print("Bat")
                 batCounter = batCounter + 1
+            else:
+                print("Non-Bat")
             point = point + 64
     # print("Bat Count for this Frame: ", batCounter)
     return batCounter

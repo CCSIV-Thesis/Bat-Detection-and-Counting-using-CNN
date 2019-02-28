@@ -7,7 +7,7 @@ batCounter = 0
 finalCount = 0
 z = 0
 vid = cv2.VideoCapture('output.mp4')
-model = load_model("model.model")
+model = load_model("latestbat.model")
 
 def preprocessing(frame):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -140,8 +140,8 @@ print("Processing....")
 while (vid.isOpened()):
     if(z < vid.get(cv2.CAP_PROP_FRAME_COUNT)):
         ret, frame = vid.read()
-        preprocessedFrame = preprocessing(frame)
-        frameCount = predictions(preprocessedFrame,batCounter,direction)
+        # preprocessedFrame = preprocessing(frame)
+        frameCount = predictions(frame,batCounter,direction)
         finalCount = finalCount + frameCount
         z = z + 1
     else:

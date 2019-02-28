@@ -17,7 +17,6 @@ from keras.optimizers import Adam
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.image import img_to_array
 from keras.utils import to_categorical
-from pyimagesearch.lenet import LeNet
 from imutils import paths
 from sklearn.metrics import classification_report,confusion_matrix
 import itertools

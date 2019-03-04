@@ -55,7 +55,7 @@ def predictions(frame,batCounter,direction):
                 batCounter = batCounter + 1
             else:
                 print("Non-Bat")
-            point = point + 64
+            point = point + 32
     elif(direction == "2" or direction == "4"):
         while(point < x):
             if(direction == "2"):
@@ -77,7 +77,8 @@ def predictions(frame,batCounter,direction):
                 batCounter = batCounter + 1
             else:
                 print("Non-Bat")
-            point = point + 64
+            #50% sliding window
+            point = point + 32
     return batCounter
 print("Which direction does the bats go?\n1 for Right \n2 for Top \n3 for Left \n4 for Down\n")
 direction = input()

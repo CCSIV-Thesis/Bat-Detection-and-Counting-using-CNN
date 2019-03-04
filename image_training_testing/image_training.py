@@ -1,5 +1,5 @@
 # USAGE
-# python image_training.py --dataset databats --model bat.model
+# python image_training.py --dataset datasetname --model modelname.model
 
 # set the matplotlib backend so figures can be saved in the background
 import matplotlib

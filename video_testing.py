@@ -102,12 +102,17 @@ def predictions(frame,batCounter,direction):
             else:
                 print("Non-Bat")
 <<<<<<< HEAD
+<<<<<<< HEAD
             #50% sliding window
             point = point + 32
 =======
             point = point + 64
     # print("Bat Count for this Frame: ", batCounter)
 >>>>>>> f9cba2a07283f4d0f8851aec7b4c6b9ab6fa4a95
+=======
+            #50% sliding window
+            point = point + 32
+>>>>>>> bb0cf4661e728eaf31bcaaa008005a91709f29ee
     return batCounter
 
 print("Total Estimated Count of Bats: ")

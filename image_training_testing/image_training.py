@@ -41,7 +41,7 @@ args = vars(ap.parse_args())
 # and batch size
 img_rows=64
 img_cols=64
-epochs = 150
+# epochs = 150
 initial_learning = 1e-3
 batch_size = 1
 
@@ -145,7 +145,7 @@ model.add(Activation('relu'))
 model.add(Dropout(0.5))
 model.add(Dense(num_classes))
 model.add(Activation('softmax'))
-opt = Adam(lr=initial_learning, decay=initial_learning / epochs)
+opt = Adam(lr=initial_learning, decay=initial_learning)
 model.compile(loss="binary_crossentropy", optimizer=opt,
 	metrics=["accuracy"])
 
@@ -159,11 +159,16 @@ model.layers[0].get_weights()
 np.shape(model.layers[0].get_weights()[0])
 model.layers[0].trainable
 
+es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=200)
+mc = ModelCheckpoint('best_model.h5', monitor='val_acc', mode='max', verbose=1, save_best_only=True)
+
 # train the network
 print("[INFO] training network...")
-H = model.fit_generator(aug.flow(trainX, trainY, batch_size=batch_size),
+fit = model.fit_generator(aug.flow(trainX, trainY, batch_size=batch_size),
 	validation_data=(testX, testY), steps_per_epoch=len(trainX) // batch_size,
-	epochs=epochs, verbose=1)
+	epochs=1000, verbose=1)
+
+es_epochs = len(history.history['loss'])
 
 # save the model to disk
 print("[INFO] serializing network...")
@@ -172,11 +177,11 @@ model.save(args["model"])
 # plot the training loss and accuracy
 plt.style.use("classic")
 plt.figure()
-N = epochs
-plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
-plt.plot(np.arange(0, N), H.history["val_loss"], label="val_loss")
-plt.plot(np.arange(0, N), H.history["acc"], label="train_acc")
-plt.plot(np.arange(0, N), H.history["val_acc"], label="val_acc")
+N = es_epochs
+plt.plot(np.arange(0, N), fit.history["loss"], label="train_loss")
+plt.plot(np.arange(0, N), fit.history["val_loss"], label="val_loss")
+plt.plot(np.arange(0, N), fit.history["acc"], label="train_acc")
+plt.plot(np.arange(0, N), fit.history["val_acc"], label="val_acc")
 plt.title("Training Loss and Accuracy on Bat/Non Bat")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")

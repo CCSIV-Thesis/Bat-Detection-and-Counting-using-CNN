@@ -20,6 +20,7 @@ args = vars(ap.parse_args())
 
 img_rows=64
 img_cols=64
+threshold = .8
 
 # load the image
 image = cv2.imread(args["image"])
@@ -71,12 +72,18 @@ print("[INFO] loading network...")
 model = load_model(args["model"])
 
 # classify the input image
-(non_bat, bat) = model.predict(image)[0]
+bat = model.predict(image)[0]
 
 # build the label
-label = "Bat" if bat > non_bat else "Non Bat"
-proba = bat if bat > non_bat else non_bat
-label = "{}: {:.2f}%".format(label, proba * 100)
+
+if bat > threshold:
+	label = "Bat"
+	proba = bat[0]
+	label = "{}: {:.2f}%".format(label, proba * 100)
+else:
+	label = "Non Bat"
+	proba = bat[1]
+	label = "{}: {:.2f}%".format(label, proba * 100)
 
 # draw the label on the image
 output = imutils.resize(orig, width=400)

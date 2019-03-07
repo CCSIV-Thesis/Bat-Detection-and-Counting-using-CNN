@@ -19,6 +19,8 @@ from keras.preprocessing.image import img_to_array
 from keras.utils import to_categorical
 from imutils import paths
 from sklearn.metrics import classification_report,confusion_matrix
+from keras.callbacks import EarlyStopping
+from keras.callbacks import ModelCheckpoint
 import itertools
 import matplotlib.pyplot as plt
 import numpy as np
@@ -39,8 +41,8 @@ args = vars(ap.parse_args())
 
 # initialize the number of epochs to train for, initia learning rate,
 # and batch size
-img_rows=64
-img_cols=64
+img_rows=16
+img_cols=16
 # epochs = 150
 initial_learning = 1e-3
 batch_size = 1
@@ -54,7 +56,7 @@ labels = []
 imagePaths = sorted(list(paths.list_images(args["dataset"])))
 random.seed(42)
 random.shuffle(imagePaths)
-
+x=0
 # loop over the input images
 for imagePath in imagePaths:
 	# load the image, pre-process it, and store it in the data list
@@ -99,9 +101,11 @@ for imagePath in imagePaths:
 	# extract the class label from the image path and update the
 	# labels list
 	label = imagePath.split(os.path.sep)[-2]
-	label = 1 if label == "bat" else 0
+	if label == "bat":
+		label = 0
+	elif label == "non-bat":
+		label = 1
 	labels.append(label)
-
 # scale the raw pixel intensities to the range [0, 1]
 data = np.array(data, dtype="float") / 255.0
 labels = np.array(labels)
@@ -127,25 +131,25 @@ num_classes = 2
 input_shape=data[0].shape
 print(input_shape)
 model = Sequential()
-model.add(Conv2D(16,kernel_size=(3,3),padding='same',input_shape=input_shape))
+model.add(Conv2D(4,kernel_size=(3,3),padding='same',input_shape=input_shape))
 model.add(Activation('relu'))
-model.add(Conv2D(16,kernel_size=(3,3),padding='same'))
+model.add(Conv2D(4,kernel_size=(3,3),padding='same'))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
-model.add(Conv2D(32,kernel_size=(3,3),padding='same'))
+model.add(Conv2D(8,kernel_size=(3,3),padding='same'))
 model.add(Activation('relu'))
-model.add(Conv2D(32,kernel_size=(3,3),padding='same'))
+model.add(Conv2D(8,kernel_size=(3,3),padding='same'))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
 model.add(Flatten())
-model.add(Dense(32))
+model.add(Dense(16))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 model.add(Dense(num_classes))
 model.add(Activation('softmax'))
-opt = Adam(lr=initial_learning, decay=initial_learning)
+opt = Adam(lr=initial_learning)
 model.compile(loss="binary_crossentropy", optimizer=opt,
 	metrics=["accuracy"])
 
@@ -159,16 +163,16 @@ model.layers[0].get_weights()
 np.shape(model.layers[0].get_weights()[0])
 model.layers[0].trainable
 
-es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=200)
-mc = ModelCheckpoint('best_model.h5', monitor='val_acc', mode='max', verbose=1, save_best_only=True)
+es = EarlyStopping(monitor='val_acc', mode='auto', verbose=1, patience=200)
+mc = ModelCheckpoint(args["model"], monitor='val_acc', mode='max', verbose=1, save_best_only=True)
 
 # train the network
 print("[INFO] training network...")
 fit = model.fit_generator(aug.flow(trainX, trainY, batch_size=batch_size),
 	validation_data=(testX, testY), steps_per_epoch=len(trainX) // batch_size,
-	epochs=1000, verbose=1)
+	epochs=2000, verbose=1, callbacks=[es,mc])
 
-es_epochs = len(history.history['loss'])
+es_epochs = len(fit.history['loss'])
 
 # save the model to disk
 print("[INFO] serializing network...")
@@ -193,7 +197,7 @@ plt.show()
 
 Y_pred = model.predict(testX)
 y_pred = np.argmax(Y_pred, axis=1)
-target_names = ['class 0(Bats)', 'class 1(Non-Bat)']
+target_names = ['class 0(Bats)', 'class 1(Non-Bats)']
 
 print(classification_report(np.argmax(testY,axis=1), y_pred,target_names=target_names))
 

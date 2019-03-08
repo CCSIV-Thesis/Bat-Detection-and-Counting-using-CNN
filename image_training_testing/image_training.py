@@ -41,8 +41,8 @@ args = vars(ap.parse_args())
 
 # initialize the number of epochs to train for, initia learning rate,
 # and batch size
-img_rows=16
-img_cols=16
+img_rows=64
+img_cols=64
 # epochs = 150
 initial_learning = 1e-3
 batch_size = 1
@@ -131,15 +131,15 @@ num_classes = 2
 input_shape=data[0].shape
 print(input_shape)
 model = Sequential()
-model.add(Conv2D(4,kernel_size=(3,3),padding='same',input_shape=input_shape))
+model.add(Conv2D(32,kernel_size=(3,3),padding='same',input_shape=input_shape))
 model.add(Activation('relu'))
-model.add(Conv2D(4,kernel_size=(3,3),padding='same'))
+model.add(Conv2D(32,kernel_size=(3,3),padding='same'))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
-model.add(Conv2D(8,kernel_size=(3,3),padding='same'))
+model.add(Conv2D(64,kernel_size=(3,3),padding='same'))
 model.add(Activation('relu'))
-model.add(Conv2D(8,kernel_size=(3,3),padding='same'))
+model.add(Conv2D(64,kernel_size=(3,3),padding='same'))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
